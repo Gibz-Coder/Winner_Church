@@ -20,7 +20,7 @@ class CategorySeeder extends Seeder
         ['name' => 'Media', 'description' => 'Cameras, lenses, tripods and studio lighting.'],
         ['name' => 'Musical Instruments', 'description' => 'Keyboards, guitars, drums and microphones.'],
         ['name' => 'Electronics & Gadgets', 'description' => 'Laptops, routers, switchers and TVs.'],
-        ['name' => 'General Church Property', 'description' => 'Chairs, pulpits and stage decorations.'],
+        ['name' => 'General Property', 'description' => 'Chairs, pulpits and stage decorations.'],
     ];
 
     /**

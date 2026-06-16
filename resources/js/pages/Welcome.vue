@@ -22,7 +22,7 @@ const toggleAppearance = () => {
     >
         <button
             @click="toggleAppearance"
-            class="absolute top-6 right-6 inline-flex h-9 w-9 items-center justify-center rounded-sm border border-[#19140035] text-[#1b1b18] hover:bg-neutral-100 dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:bg-[#161615] focus:outline-none"
+            class="absolute top-6 right-6 inline-flex h-9 w-9 items-center justify-center rounded-sm border border-[#19140035] text-[#1b1b18] hover:bg-neutral-100 focus:outline-none dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:bg-[#161615]"
             aria-label="Toggle theme"
         >
             <Sun v-if="resolvedAppearance === 'dark'" class="h-4 w-4" />
@@ -62,9 +62,13 @@ const toggleAppearance = () => {
                 class="relative w-full max-w-[335px] overflow-hidden rounded-lg lg:max-w-4xl"
             >
                 <img
-                    :src="resolvedAppearance === 'dark' ? '/welcome-banner-dark.jpg' : '/welcome-banner-light.jpg'"
+                    :src="
+                        resolvedAppearance === 'dark'
+                            ? '/welcome-banner-dark.jpg'
+                            : '/welcome-banner-light.jpg'
+                    "
                     alt="Welcome Banner"
-                    class="w-full h-auto object-cover"
+                    class="h-auto w-full object-cover"
                 />
                 <div
                     class="absolute inset-0 rounded-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"

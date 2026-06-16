@@ -24,7 +24,10 @@ defineOptions({
     <Head title="Add asset" />
 
     <div class="flex h-full flex-1 flex-col gap-6 p-4">
-        <Heading title="Add asset" description="Register a new church asset in the inventory." />
+        <Heading
+            title="Add asset"
+            description="Register a new church asset in the inventory."
+        />
         <div class="max-w-3xl">
             <AssetForm :categories="categories" :statuses="statuses" />
         </div>

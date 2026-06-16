@@ -1,8 +1,4 @@
-export type AssetStatus =
-    | 'available'
-    | 'in_use'
-    | 'under_repair'
-    | 'disposed';
+export type AssetStatus = 'available' | 'in_use' | 'under_repair' | 'disposed';
 
 export type SelectOption<TValue = string> = {
     value: TValue;

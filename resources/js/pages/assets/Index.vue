@@ -72,7 +72,9 @@ watch([search, status, category], () => {
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h1 class="text-xl font-semibold">Asset Inventory</h1>
-                <p class="text-sm text-muted-foreground">Track and manage all church assets.</p>
+                <p class="text-sm text-muted-foreground">
+                    Track and manage all church assets.
+                </p>
             </div>
             <Button as-child>
                 <Link :href="create()"><Plus class="size-4" /> Add asset</Link>
@@ -80,24 +82,43 @@ watch([search, status, category], () => {
         </div>
 
         <div class="grid gap-3 md:grid-cols-3">
-            <Input v-model="search" placeholder="Search by name, serial or brand..." />
+            <Input
+                v-model="search"
+                placeholder="Search by name, serial or brand..."
+            />
             <Select v-model="status">
-                <SelectTrigger class="w-full"><SelectValue placeholder="Status" /></SelectTrigger>
+                <SelectTrigger class="w-full"
+                    ><SelectValue placeholder="Status"
+                /></SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All statuses</SelectItem>
-                    <SelectItem v-for="s in statuses" :key="s.value" :value="s.value">{{ s.label }}</SelectItem>
+                    <SelectItem
+                        v-for="s in statuses"
+                        :key="s.value"
+                        :value="s.value"
+                        >{{ s.label }}</SelectItem
+                    >
                 </SelectContent>
             </Select>
             <Select v-model="category">
-                <SelectTrigger class="w-full"><SelectValue placeholder="Category" /></SelectTrigger>
+                <SelectTrigger class="w-full"
+                    ><SelectValue placeholder="Category"
+                /></SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All categories</SelectItem>
-                    <SelectItem v-for="c in categories" :key="c.value" :value="c.value">{{ c.label }}</SelectItem>
+                    <SelectItem
+                        v-for="c in categories"
+                        :key="c.value"
+                        :value="c.value"
+                        >{{ c.label }}</SelectItem
+                    >
                 </SelectContent>
             </Select>
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+        <div
+            class="overflow-x-auto rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+        >
             <table class="w-full text-left text-sm">
                 <thead class="bg-muted/50 text-muted-foreground">
                     <tr>
@@ -115,32 +136,59 @@ watch([search, status, category], () => {
                         class="cursor-pointer border-t border-sidebar-border/70 transition-colors hover:bg-muted/50 dark:border-sidebar-border"
                         @click="router.visit(show(asset.id).url)"
                     >
-                        <td class="px-4 py-3 font-medium">{{ asset.name }}<span class="block text-xs text-muted-foreground">{{ asset.brand }}</span></td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ asset.name
+                            }}<span
+                                class="block text-xs text-muted-foreground"
+                                >{{ asset.brand }}</span
+                            >
+                        </td>
                         <td class="px-4 py-3">{{ asset.category }}</td>
-                        <td class="px-4 py-3">{{ asset.current_location ?? '—' }}</td>
-                        <td class="px-4 py-3 text-muted-foreground">{{ asset.serial_number ?? '—' }}</td>
                         <td class="px-4 py-3">
-                            <Badge :variant="statusVariant(asset.status)">{{ asset.status_label }}</Badge>
+                            {{ asset.current_location ?? '—' }}
+                        </td>
+                        <td class="px-4 py-3 text-muted-foreground">
+                            {{ asset.serial_number ?? '—' }}
+                        </td>
+                        <td class="px-4 py-3">
+                            <Badge :variant="statusVariant(asset.status)">{{
+                                asset.status_label
+                            }}</Badge>
                         </td>
                     </tr>
                     <tr v-if="assets.data.length === 0">
-                        <td colspan="5" class="px-4 py-10 text-center text-muted-foreground">No assets found.</td>
+                        <td
+                            colspan="5"
+                            class="px-4 py-10 text-center text-muted-foreground"
+                        >
+                            No assets found.
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div v-if="assets.last_page > 1" class="flex flex-wrap items-center gap-1">
+        <div
+            v-if="assets.last_page > 1"
+            class="flex flex-wrap items-center gap-1"
+        >
             <template v-for="link in assets.links" :key="link.label">
                 <Link
                     v-if="link.url"
                     :href="link.url"
                     preserve-scroll
                     class="rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-muted"
-                    :class="{ 'bg-primary text-primary-foreground hover:bg-primary': link.active }"
+                    :class="{
+                        'bg-primary text-primary-foreground hover:bg-primary':
+                            link.active,
+                    }"
                     v-html="link.label"
                 />
-                <span v-else class="px-3 py-1.5 text-sm text-muted-foreground" v-html="link.label" />
+                <span
+                    v-else
+                    class="px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
             </template>
         </div>
     </div>
