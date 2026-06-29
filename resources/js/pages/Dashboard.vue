@@ -61,6 +61,7 @@ const statsCards = computed(() => [
         icon: Package,
         color: 'text-[#FF8A00]',
         bg: 'bg-[#FF8A00]/10',
+        borderClass: 'border-l-4 border-l-[#FF8A00]!',
     },
     {
         label: 'Available',
@@ -69,6 +70,7 @@ const statsCards = computed(() => [
         icon: CheckCircle2,
         color: 'text-emerald-600 dark:text-emerald-400',
         bg: 'bg-emerald-50/70 dark:bg-emerald-950/20',
+        borderClass: 'border-l-4 border-l-emerald-500!',
     },
     {
         label: 'Borrowed',
@@ -77,6 +79,7 @@ const statsCards = computed(() => [
         icon: Clock,
         color: 'text-[#FFC300]',
         bg: 'bg-[#FFC300]/10',
+        borderClass: 'border-l-4 border-l-[#FFC300]!',
     },
     {
         label: 'Maintenance',
@@ -85,6 +88,7 @@ const statsCards = computed(() => [
         icon: Wrench,
         color: 'text-rose-600 dark:text-rose-400',
         bg: 'bg-rose-50/70 dark:bg-rose-950/20',
+        borderClass: 'border-l-4 border-l-rose-500!',
     },
     {
         label: 'Disposed',
@@ -93,6 +97,7 @@ const statsCards = computed(() => [
         icon: Trash2,
         color: 'text-slate-600 dark:text-slate-400',
         bg: 'bg-slate-100/70 dark:bg-slate-900/30',
+        borderClass: 'border-l-4 border-l-slate-400!',
     },
 ]);
 
@@ -149,7 +154,10 @@ const maxCategoryCount = computed(() => {
             <div
                 v-for="stat in statsCards"
                 :key="stat.label"
-                class="relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:shadow-md dark:border-neutral-800/80 dark:bg-neutral-900"
+                :class="[
+                    'relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-white/60 p-5 shadow-xs backdrop-blur-md transition-all duration-300 hover:shadow-md dark:border-neutral-800/80 dark:bg-neutral-900/60',
+                    stat.borderClass,
+                ]"
             >
                 <div class="flex items-center justify-between">
                     <span
@@ -188,7 +196,7 @@ const maxCategoryCount = computed(() => {
             <div class="grid gap-6 lg:col-span-2">
                 <!-- Categories Bar Charts -->
                 <div
-                    class="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs dark:border-neutral-800/80 dark:bg-neutral-900"
+                    class="rounded-2xl border border-t-4 border-neutral-200/80 border-t-[#FF8A00]! bg-white/60 p-6 shadow-xs backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-900/60"
                 >
                     <div class="mb-5 flex items-center justify-between">
                         <div>
@@ -247,7 +255,7 @@ const maxCategoryCount = computed(() => {
 
                 <!-- Shortcuts grid -->
                 <div
-                    class="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs dark:border-neutral-800/80 dark:bg-neutral-900"
+                    class="rounded-2xl border border-t-4 border-neutral-200/80 border-t-[#FFC300]! bg-white/60 p-6 shadow-xs backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-900/60"
                 >
                     <h2
                         class="mb-4 font-display text-sm font-bold tracking-wider text-neutral-900 uppercase dark:text-neutral-50"
@@ -258,15 +266,15 @@ const maxCategoryCount = computed(() => {
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
                         <Link
                             :href="assetsIndex()"
-                            class="group flex flex-col items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 text-center transition-all duration-300 hover:border-[#FF8A00]/30 hover:bg-[#FF8A00]/5 dark:border-neutral-800 dark:bg-neutral-950/40 dark:hover:border-[#FF8A00]/30 dark:hover:bg-[#FF8A00]/5"
+                            class="group flex flex-col items-center justify-center rounded-xl border border-[#FF8A00]/20 bg-[#FF8A00]/5 p-4 text-center transition-all duration-300 hover:border-[#FF8A00]/50 hover:bg-[#FF8A00]/10 dark:border-[#FF8A00]/15 dark:bg-[#FF8A00]/5 dark:hover:border-[#FF8A00]/30 dark:hover:bg-[#FF8A00]/10"
                         >
                             <div
-                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#FF8A00]/10 text-[#FF8A00] transition-transform group-hover:scale-110"
+                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#FF8A00]/15 text-[#FF8A00] transition-transform group-hover:scale-110"
                             >
                                 <Boxes class="size-5" />
                             </div>
                             <span
-                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase dark:text-neutral-300"
+                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase transition-colors group-hover:text-[#FF8A00] dark:text-neutral-300"
                                 style="font-family: 'Orbitron', sans-serif"
                                 >Assets Directory</span
                             >
@@ -274,15 +282,15 @@ const maxCategoryCount = computed(() => {
 
                         <Link
                             :href="borrowIndex()"
-                            class="group flex flex-col items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 text-center transition-all duration-300 hover:border-[#FF8A00]/30 hover:bg-[#FF8A00]/5 dark:border-neutral-800 dark:bg-neutral-950/40 dark:hover:border-[#FF8A00]/30 dark:hover:bg-[#FF8A00]/5"
+                            class="group flex flex-col items-center justify-center rounded-xl border border-[#FFC300]/25 bg-[#FFC300]/5 p-4 text-center transition-all duration-300 hover:border-[#FFC300]/50 hover:bg-[#FFC300]/10 dark:border-[#FFC300]/15 dark:bg-[#FFC300]/5 dark:hover:border-[#FFC300]/30 dark:hover:bg-[#FFC300]/10"
                         >
                             <div
-                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#FF8A00]/10 text-[#FF8A00] transition-transform group-hover:scale-110"
+                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#FFC300]/15 text-[#FFC300] transition-transform group-hover:scale-110"
                             >
                                 <ArrowLeftRight class="size-5" />
                             </div>
                             <span
-                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase dark:text-neutral-300"
+                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase transition-colors group-hover:text-[#FFC300] dark:text-neutral-300"
                                 style="font-family: 'Orbitron', sans-serif"
                                 >Borrow & Return</span
                             >
@@ -290,15 +298,15 @@ const maxCategoryCount = computed(() => {
 
                         <Link
                             :href="reportsIndex()"
-                            class="group flex flex-col items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 text-center transition-all duration-300 hover:border-[#FF8A00]/30 hover:bg-[#FF8A00]/5 dark:border-neutral-800 dark:bg-neutral-950/40 dark:hover:border-[#FF8A00]/30 dark:hover:bg-[#FF8A00]/5"
+                            class="group flex flex-col items-center justify-center rounded-xl border border-[#00D4FF]/25 bg-[#00D4FF]/5 p-4 text-center transition-all duration-300 hover:border-[#00D4FF]/50 hover:bg-[#00D4FF]/10 dark:border-[#00D4FF]/15 dark:bg-[#00D4FF]/5 dark:hover:border-[#00D4FF]/30 dark:hover:bg-[#00D4FF]/10"
                         >
                             <div
-                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#FF8A00]/10 text-[#FF8A00] transition-transform group-hover:scale-110"
+                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#00D4FF]/15 text-[#00D4FF] transition-transform group-hover:scale-110"
                             >
                                 <BarChart3 class="size-5" />
                             </div>
                             <span
-                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase dark:text-neutral-300"
+                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase transition-colors group-hover:text-[#00D4FF] dark:text-neutral-300"
                                 style="font-family: 'Orbitron', sans-serif"
                                 >Reports Panel</span
                             >
@@ -306,15 +314,15 @@ const maxCategoryCount = computed(() => {
 
                         <Link
                             href="/settings/profile"
-                            class="group flex flex-col items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 text-center transition-all duration-300 hover:border-[#FF8A00]/30 hover:bg-[#FF8A00]/5 dark:border-neutral-800 dark:bg-neutral-950/40 dark:hover:border-[#FF8A00]/30 dark:hover:bg-[#FF8A00]/5"
+                            class="group flex flex-col items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/5 p-4 text-center transition-all duration-300 hover:border-violet-500/50 hover:bg-violet-500/10 dark:border-violet-500/15 dark:bg-violet-500/5 dark:hover:border-violet-500/30 dark:hover:bg-violet-500/10"
                         >
                             <div
-                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#FF8A00]/10 text-[#FF8A00] transition-transform group-hover:scale-110"
+                                class="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-violet-500/15 text-violet-500 transition-transform group-hover:scale-110"
                             >
                                 <Settings class="size-5" />
                             </div>
                             <span
-                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase dark:text-neutral-300"
+                                class="font-display text-xs font-bold tracking-wider text-neutral-700 uppercase transition-colors group-hover:text-violet-500 dark:text-neutral-300"
                                 style="font-family: 'Orbitron', sans-serif"
                                 >Settings</span
                             >
@@ -327,7 +335,7 @@ const maxCategoryCount = computed(() => {
             <div class="flex flex-col gap-6">
                 <!-- Activity timeline -->
                 <div
-                    class="flex-1 rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs dark:border-neutral-800/80 dark:bg-neutral-900"
+                    class="flex-1 rounded-2xl border border-t-4 border-neutral-200/80 border-t-[#FF8A00]! bg-white/60 p-6 shadow-xs backdrop-blur-md dark:border-neutral-800/80 dark:bg-neutral-900/60"
                 >
                     <h2
                         class="mb-4 font-display text-sm font-bold tracking-wider text-neutral-900 uppercase dark:text-neutral-50"

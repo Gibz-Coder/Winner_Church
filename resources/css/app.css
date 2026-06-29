@@ -171,4 +171,18 @@
     body {
         @apply bg-background text-foreground;
     }
+    /* Ambient glassmorphic cards */
+    .rounded-2xl.border.bg-white,
+    .rounded-xl.border.bg-white,
+    .rounded-2xl.border.bg-card,
+    .rounded-xl.border.bg-card {
+        @apply border-neutral-200/50! bg-gradient-to-br from-white/70 to-white/40! backdrop-blur-md transition-all duration-300 dark:border-neutral-800/40! dark:from-neutral-900/80! dark:to-neutral-950/40!;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+    }
+    .dark .rounded-2xl.border.bg-white,
+    .dark .rounded-xl.border.bg-white,
+    .dark .rounded-2xl.border.bg-card,
+    .dark .rounded-xl.border.bg-card {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+    }
 }

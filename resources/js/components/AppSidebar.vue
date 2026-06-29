@@ -10,6 +10,7 @@ import {
     MapPin,
     Users,
     Settings,
+    Flame,
 } from '@lucide/vue';
 import { computed } from 'vue';
 import NavMain from '@/components/NavMain.vue';
@@ -104,26 +105,34 @@ const navItems = computed(() => {
         >
             <!-- Expanded Brand Name (Contains Logo and Text) -->
             <div
-                class="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden"
+                class="flex items-center gap-3 group-data-[collapsible=icon]:hidden"
             >
-                <img
-                    src="/brand_name_dark.png"
-                    alt="Winner Church"
-                    class="h-11 self-start object-contain"
-                />
-                <span
-                    class="mt-1 truncate pl-1 text-[10px] font-bold tracking-widest text-neutral-400 uppercase dark:text-neutral-500"
-                    style="font-family: 'Orbitron', sans-serif"
+                <!-- Brand Icon (Flame) in a polished gradient badge -->
+                <div
+                    class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#FF8A00] to-[#FFC300] shadow-[0_0_12px_rgba(255,138,0,0.3)]"
                 >
-                    Asset Inventory System
-                </span>
+                    <Flame class="size-4.5 fill-[#0B1220] text-[#0B1220]" />
+                </div>
+                <!-- Written Branding Name & Subtitle -->
+                <div class="flex flex-col leading-tight">
+                    <span
+                        class="text-sm font-black tracking-widest text-white uppercase"
+                        style="font-family: 'Orbitron', sans-serif"
+                        >Winner <span class="text-[#FF8A00]">Church</span></span
+                    >
+                    <span
+                        class="mt-0.5 text-[9px] font-bold tracking-[0.18em] text-neutral-400 uppercase"
+                        style="font-family: 'Orbitron', sans-serif"
+                        >Inventory System</span
+                    >
+                </div>
             </div>
             <!-- Collapsed Brand Logo -->
-            <img
-                src="/brand_logo.png"
-                alt="Winner Church Logo"
-                class="hidden size-8 shrink-0 object-contain group-data-[collapsible=icon]:block"
-            />
+            <div
+                class="hidden size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#FF8A00] to-[#FFC300] group-data-[collapsible=icon]:flex"
+            >
+                <Flame class="size-4.5 fill-[#0B1220] text-[#0B1220]" />
+            </div>
         </SidebarHeader>
 
         <SidebarContent class="py-4">
@@ -133,30 +142,32 @@ const navItems = computed(() => {
         <SidebarFooter class="border-t border-sidebar-border/40">
             <!-- Sidebar Brand Footer -->
             <div
-                class="flex flex-col gap-2.5 p-3.5 group-data-[collapsible=icon]:hidden"
+                class="flex flex-col gap-2 p-3.5 group-data-[collapsible=icon]:hidden"
             >
-                <div class="flex items-center gap-3">
-                    <img
-                        src="/brand_logo.png"
-                        alt="Winner Church Logo"
-                        class="size-9 shrink-0 animate-pulse object-contain"
-                    />
+                <div class="flex items-center gap-2.5">
+                    <!-- Brand Icon (Flame) in a polished gradient badge -->
                     <div
-                        class="flex flex-col text-[11px] leading-tight font-bold tracking-tight text-neutral-400"
+                        class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#FF8A00] to-[#FFC300]"
                     >
+                        <Flame class="size-4 fill-[#0B1220] text-[#0B1220]" />
+                    </div>
+                    <!-- Written Branding Name & Subtitle -->
+                    <div class="flex flex-col text-[11px] leading-tight">
                         <span
-                            class="text-sm font-black text-[#FF8A00]"
+                            class="text-xs font-black tracking-widest text-[#FF8A00] uppercase"
                             style="font-family: 'Orbitron', sans-serif"
                             >Winner Church</span
                         >
                         <span
-                            class="text-[10px] font-semibold tracking-tight text-neutral-500"
-                            >Asset Inventory System</span
+                            class="text-[9px] font-semibold tracking-wider text-neutral-500 uppercase"
+                            >Inventory System</span
                         >
                     </div>
                 </div>
-                <span class="text-[10px] font-medium text-neutral-500">
-                    © 2025 All rights reserved.
+                <span
+                    class="text-[9px] font-medium tracking-wide text-neutral-500"
+                >
+                    © 2026 Winner Church. All rights reserved.
                 </span>
             </div>
         </SidebarFooter>
