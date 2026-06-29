@@ -4,7 +4,13 @@ use App\Enums\AssetLogAction;
 use App\Enums\AssetStatus;
 use App\Models\Asset;
 use App\Models\Category;
+use App\Models\Role;
 use App\Models\User;
+
+beforeEach(function () {
+    // Seed roles and permissions
+    $this->artisan('db:seed');
+});
 
 test('guests cannot access the asset index', function () {
     $this->get(route('assets.index'))->assertRedirect(route('login'));
@@ -12,21 +18,23 @@ test('guests cannot access the asset index', function () {
 
 test('authenticated users can view the asset index', function () {
     $user = User::factory()->create();
-    Asset::factory()->count(3)->create();
+    $category = Category::first();
+    Asset::factory()->count(3)->create(['category_id' => $category->id]);
 
     $this->actingAs($user)
         ->get(route('assets.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('assets/Index')
-            ->has('assets.data', 3)
+            ->has('assets.data', min(10, Asset::count()))
         );
 });
 
 test('the index can be filtered by status', function () {
     $user = User::factory()->create();
-    Asset::factory()->create(['status' => AssetStatus::Available]);
-    Asset::factory()->create(['status' => AssetStatus::Disposed]);
+    $category = Category::first();
+    Asset::factory()->create(['status' => AssetStatus::Available, 'category_id' => $category->id]);
+    Asset::factory()->create(['status' => AssetStatus::Disposed, 'category_id' => $category->id]);
 
     $this->actingAs($user)
         ->get(route('assets.index', ['status' => AssetStatus::Disposed->value]))
@@ -34,8 +42,12 @@ test('the index can be filtered by status', function () {
 });
 
 test('an asset can be created and logs the creation', function () {
+    // Create an admin user to authorize asset management
     $user = User::factory()->create();
-    $category = Category::factory()->create();
+    $adminRole = Role::where('name', 'admin')->first();
+    $user->roles()->attach($adminRole);
+
+    $category = Category::first();
 
     $response = $this->actingAs($user)->post(route('assets.store'), [
         'category_id' => $category->id,
@@ -52,8 +64,11 @@ test('an asset can be created and logs the creation', function () {
 
 test('serial numbers must be unique when provided', function () {
     $user = User::factory()->create();
-    $category = Category::factory()->create();
-    Asset::factory()->create(['serial_number' => 'DUPLICATE']);
+    $adminRole = Role::where('name', 'admin')->first();
+    $user->roles()->attach($adminRole);
+
+    $category = Category::first();
+    Asset::factory()->create(['serial_number' => 'DUPLICATE', 'category_id' => $category->id]);
 
     $this->actingAs($user)
         ->post(route('assets.store'), [
@@ -67,12 +82,16 @@ test('serial numbers must be unique when provided', function () {
 
 test('updating the status records a status change log', function () {
     $user = User::factory()->create();
-    $asset = Asset::factory()->create(['status' => AssetStatus::Available]);
+    $adminRole = Role::where('name', 'admin')->first();
+    $user->roles()->attach($adminRole);
+
+    $category = Category::first();
+    $asset = Asset::factory()->create(['status' => AssetStatus::Available, 'category_id' => $category->id]);
 
     $this->actingAs($user)->put(route('assets.update', $asset), [
         'category_id' => $asset->category_id,
         'name' => $asset->name,
-        'status' => AssetStatus::UnderRepair->value,
+        'status' => AssetStatus::UnderMaintenance->value,
     ])->assertRedirect(route('assets.show', $asset));
 
     expect($asset->logs()->where('action', AssetLogAction::StatusChange)->exists())->toBeTrue();
@@ -80,7 +99,11 @@ test('updating the status records a status change log', function () {
 
 test('an asset can be deleted', function () {
     $user = User::factory()->create();
-    $asset = Asset::factory()->create();
+    $adminRole = Role::where('name', 'admin')->first();
+    $user->roles()->attach($adminRole);
+
+    $category = Category::first();
+    $asset = Asset::factory()->create(['category_id' => $category->id]);
 
     $this->actingAs($user)
         ->delete(route('assets.destroy', $asset))
@@ -91,7 +114,8 @@ test('an asset can be deleted', function () {
 
 test('the show page defers the activity logs', function () {
     $user = User::factory()->create();
-    $asset = Asset::factory()->create();
+    $category = Category::first();
+    $asset = Asset::factory()->create(['category_id' => $category->id]);
 
     $this->actingAs($user)
         ->get(route('assets.show', $asset))

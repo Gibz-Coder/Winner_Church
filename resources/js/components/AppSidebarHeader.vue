@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { Bell, ChevronDown, Moon, Sun } from '@lucide/vue';
+import { computed } from 'vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { useAppearance } from '@/composables/useAppearance';
-import { useInitials } from '@/composables/useInitials';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import UserMenuContent from '@/components/UserMenuContent.vue';
+import { useAppearance } from '@/composables/useAppearance';
+import { useInitials } from '@/composables/useInitials';
 import type { BreadcrumbItem, User } from '@/types';
 
 withDefaults(
@@ -57,11 +57,11 @@ const showAvatar = computed(
             >
                 <Sun
                     v-if="resolvedAppearance === 'dark'"
-                    class="size-4 animate-spin text-amber-500"
+                    class="size-4 animate-spin text-[#FFC300]"
                     style="animation-duration: 10s"
                 />
-                <Moon v-else class="size-4 text-indigo-500" />
-                <span>{{
+                <Moon v-else class="size-4 text-[#FF8A00]" />
+                <span class="hidden sm:inline">{{
                     resolvedAppearance === 'dark' ? 'Light Mode' : 'Dark Mode'
                 }}</span>
             </button>
@@ -72,7 +72,7 @@ const showAvatar = computed(
             >
                 <Bell class="size-5" />
                 <span
-                    class="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white ring-2 ring-white dark:ring-neutral-900"
+                    class="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-[#FF8A00] text-[9px] font-bold text-white ring-2 ring-white dark:ring-neutral-900"
                 >
                     3
                 </span>
@@ -103,7 +103,7 @@ const showAvatar = computed(
                                 </AvatarFallback>
                             </Avatar>
                             <span
-                                class="text-xs font-bold text-neutral-700 select-none dark:text-neutral-300"
+                                class="hidden text-xs font-bold text-neutral-700 select-none sm:inline dark:text-neutral-300"
                                 >{{ user.name }}</span
                             >
                             <ChevronDown class="size-3.5 text-neutral-400" />

@@ -17,10 +17,9 @@ class CategorySeeder extends Seeder
      * @var array<int, array{name: string, description: string}>
      */
     protected array $categories = [
-        ['name' => 'Media', 'description' => 'Cameras, lenses, tripods and studio lighting.'],
-        ['name' => 'Musical Instruments', 'description' => 'Keyboards, guitars, drums and microphones.'],
-        ['name' => 'Electronics & Gadgets', 'description' => 'Laptops, routers, switchers and TVs.'],
-        ['name' => 'General Property', 'description' => 'Chairs, pulpits and stage decorations.'],
+        ['name' => 'Vehicles', 'description' => 'Church vans, cars, and passenger transport vehicles.'],
+        ['name' => 'Media & Musical Instruments', 'description' => 'Audio, video, lighting equipment, and musical instruments.'],
+        ['name' => 'Office & Furniture', 'description' => 'Office furniture, computers, plastic chairs, and printing equipment.'],
     ];
 
     /**

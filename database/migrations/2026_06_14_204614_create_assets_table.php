@@ -19,10 +19,14 @@ return new class extends Migration
             $table->string('serial_number')->nullable()->unique();
             $table->string('model_number')->nullable();
             $table->string('brand')->nullable();
+            $table->text('description')->nullable();
             $table->date('purchase_date')->nullable();
             $table->decimal('cost', 12, 2)->nullable();
             $table->string('status')->default(AssetStatus::Available->value);
             $table->string('current_location')->nullable();
+            $table->string('assigned_ministry')->nullable();
+            $table->string('image')->nullable();
+            $table->text('qr_code')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

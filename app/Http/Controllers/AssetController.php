@@ -7,9 +7,11 @@ use App\Enums\AssetStatus;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Models\Asset;
+use App\Models\AuditLog;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,7 +34,9 @@ class AssetController extends Controller
                 $query->where(function ($query) use ($search): void {
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('serial_number', 'like', "%{$search}%")
-                        ->orWhere('brand', 'like', "%{$search}%");
+                        ->orWhere('brand', 'like', "%{$search}%")
+                        ->orWhere('assigned_ministry', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
                 });
             })
             ->when($filters['status'], fn ($query, string $status) => $query->where('status', $status))
@@ -46,9 +50,10 @@ class AssetController extends Controller
                 'serial_number' => $asset->serial_number,
                 'brand' => $asset->brand,
                 'current_location' => $asset->current_location,
+                'assigned_ministry' => $asset->assigned_ministry,
                 'status' => $asset->status->value,
                 'status_label' => $asset->status->label(),
-                'category' => $asset->category->name,
+                'category' => $asset->category?->name,
             ]);
 
         return Inertia::render('assets/Index', [
@@ -64,6 +69,8 @@ class AssetController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('manage_assets');
+
         return Inertia::render('assets/Create', [
             'categories' => $this->categoryOptions(),
             'statuses' => AssetStatus::options(),
@@ -75,12 +82,32 @@ class AssetController extends Controller
      */
     public function store(StoreAssetRequest $request): RedirectResponse
     {
-        $asset = Asset::query()->create($request->validated());
+        Gate::authorize('manage_assets');
+
+        $data = $request->validated();
+
+        $asset = Asset::query()->create($data);
+
+        // Generate QR code pointing to show page
+        $qrUrl = route('assets.show', $asset->id);
+        $asset->update([
+            'qr_code' => 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='.urlencode($qrUrl),
+        ]);
 
         $asset->logs()->create([
             'user_id' => $request->user()->id,
             'action' => AssetLogAction::Created,
             'description' => "Asset \"{$asset->name}\" was added to the inventory.",
+        ]);
+
+        // Audit log
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Created Asset',
+            'auditable_type' => Asset::class,
+            'auditable_id' => $asset->id,
+            'new_values' => $asset->toArray(),
+            'ip_address' => $request->ip(),
         ]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Asset created.')]);
@@ -95,17 +122,26 @@ class AssetController extends Controller
     {
         $asset->load('category:id,name');
 
+        // Dynamically ensure QR Code is generated if not exists
+        if (blank($asset->qr_code)) {
+            $qrUrl = route('assets.show', $asset->id);
+            $asset->update([
+                'qr_code' => 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='.urlencode($qrUrl),
+            ]);
+        }
+
         return Inertia::render('assets/Show', [
             'asset' => [
                 ...$asset->only([
                     'id', 'name', 'serial_number', 'model_number', 'brand',
-                    'current_location', 'notes',
+                    'description', 'current_location', 'assigned_ministry',
+                    'image', 'qr_code', 'notes',
                 ]),
                 'purchase_date' => $asset->purchase_date?->toDateString(),
                 'cost' => $asset->cost,
                 'status' => $asset->status->value,
                 'status_label' => $asset->status->label(),
-                'category' => $asset->category->name,
+                'category' => $asset->category?->name,
             ],
             'logs' => Inertia::defer(fn (): array => $asset->logs()
                 ->with('user:id,name')
@@ -127,11 +163,14 @@ class AssetController extends Controller
      */
     public function edit(Asset $asset): Response
     {
+        Gate::authorize('manage_assets');
+
         return Inertia::render('assets/Edit', [
             'asset' => [
                 ...$asset->only([
                     'id', 'category_id', 'name', 'serial_number', 'model_number',
-                    'brand', 'current_location', 'notes',
+                    'brand', 'description', 'current_location', 'assigned_ministry',
+                    'image', 'notes',
                 ]),
                 'purchase_date' => $asset->purchase_date?->toDateString(),
                 'cost' => $asset->cost,
@@ -147,7 +186,10 @@ class AssetController extends Controller
      */
     public function update(UpdateAssetRequest $request, Asset $asset): RedirectResponse
     {
+        Gate::authorize('manage_assets');
+
         $original = $asset->status;
+        $oldValues = $asset->toArray();
 
         $asset->update($request->validated());
 
@@ -161,6 +203,17 @@ class AssetController extends Controller
                 : 'Asset details were updated.',
         ]);
 
+        // Audit log
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Updated Asset',
+            'auditable_type' => Asset::class,
+            'auditable_id' => $asset->id,
+            'old_values' => $oldValues,
+            'new_values' => $asset->toArray(),
+            'ip_address' => $request->ip(),
+        ]);
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Asset updated.')]);
 
         return to_route('assets.show', $asset);
@@ -169,9 +222,22 @@ class AssetController extends Controller
     /**
      * Remove the specified asset from the inventory.
      */
-    public function destroy(Asset $asset): RedirectResponse
+    public function destroy(Request $request, Asset $asset): RedirectResponse
     {
+        Gate::authorize('manage_assets');
+
+        $oldValues = $asset->toArray();
         $asset->delete();
+
+        // Audit log
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'Deleted Asset',
+            'auditable_type' => Asset::class,
+            'auditable_id' => $asset->id,
+            'old_values' => $oldValues,
+            'ip_address' => $request->ip(),
+        ]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Asset deleted.')]);
 

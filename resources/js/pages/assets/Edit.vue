@@ -1,9 +1,12 @@
-<script lang="ts">
-import { h } from 'vue';
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import AssetForm from '@/components/assets/AssetForm.vue';
+import Heading from '@/components/Heading.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index as assetsIndex, edit, show } from '@/routes/assets';
+import type { AssetFormData, AssetStatus, SelectOption } from '@/types';
 
-export default {
+defineOptions({
     layout: (h: any, page: any) => {
         return h(
             AppLayout,
@@ -17,16 +20,9 @@ export default {
             () => page,
         );
     },
-};
-</script>
+});
 
-<script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import AssetForm from '@/components/assets/AssetForm.vue';
-import Heading from '@/components/Heading.vue';
-import type { AssetFormData, AssetStatus, SelectOption } from '@/types';
-
-const props = defineProps<{
+defineProps<{
     asset: AssetFormData;
     categories: SelectOption<number>[];
     statuses: SelectOption<AssetStatus>[];

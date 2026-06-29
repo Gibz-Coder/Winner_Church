@@ -5,8 +5,10 @@ namespace App\Enums;
 enum AssetStatus: string
 {
     case Available = 'available';
-    case InUse = 'in_use';
-    case UnderRepair = 'under_repair';
+    case Borrowed = 'borrowed';
+    case Reserved = 'reserved';
+    case UnderMaintenance = 'under_maintenance';
+    case Lost = 'lost';
     case Disposed = 'disposed';
 
     /**
@@ -16,8 +18,10 @@ enum AssetStatus: string
     {
         return match ($this) {
             self::Available => 'Available',
-            self::InUse => 'In Use',
-            self::UnderRepair => 'Under Repair',
+            self::Borrowed => 'Borrowed',
+            self::Reserved => 'Reserved',
+            self::UnderMaintenance => 'Under Maintenance',
+            self::Lost => 'Lost',
             self::Disposed => 'Disposed',
         };
     }

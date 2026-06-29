@@ -29,10 +29,14 @@ trait AssetValidationRules
             ],
             'model_number' => ['nullable', 'string', 'max:255'],
             'brand' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
             'purchase_date' => ['nullable', 'date', 'before_or_equal:today'],
             'cost' => ['nullable', 'numeric', 'min:0'],
             'status' => ['required', Rule::enum(AssetStatus::class)],
             'current_location' => ['nullable', 'string', 'max:255'],
+            'assigned_ministry' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'string', 'max:255'],
+            'qr_code' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
         ];
     }

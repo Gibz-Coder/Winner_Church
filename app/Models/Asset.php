@@ -33,10 +33,14 @@ use Illuminate\Support\Carbon;
     'serial_number',
     'model_number',
     'brand',
+    'description',
     'purchase_date',
     'cost',
     'status',
     'current_location',
+    'assigned_ministry',
+    'image',
+    'qr_code',
     'notes',
 ])]
 class Asset extends Model
@@ -76,5 +80,25 @@ class Asset extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(AssetLog::class)->latest();
+    }
+
+    /**
+     * Get the borrow requests for the asset.
+     *
+     * @return HasMany<BorrowRequest, $this>
+     */
+    public function borrowRequests(): HasMany
+    {
+        return $this->hasMany(BorrowRequest::class)->latest();
+    }
+
+    /**
+     * Get the maintenance logs for the asset.
+     *
+     * @return HasMany<MaintenanceLog, $this>
+     */
+    public function maintenanceLogs(): HasMany
+    {
+        return $this->hasMany(MaintenanceLog::class)->latest();
     }
 }

@@ -25,19 +25,24 @@ const isEditing = Boolean(props.asset?.id);
 const form = useForm<AssetFormData>({
     category_id: props.asset?.category_id ?? null,
     name: props.asset?.name ?? '',
-    serial_number: props.asset?.serial_number ?? null,
-    model_number: props.asset?.model_number ?? null,
-    brand: props.asset?.brand ?? null,
-    purchase_date: props.asset?.purchase_date ?? null,
-    cost: props.asset?.cost ?? null,
+    serial_number: props.asset?.serial_number ?? '',
+    model_number: props.asset?.model_number ?? '',
+    brand: props.asset?.brand ?? '',
+    description: props.asset?.description ?? '',
+    purchase_date: props.asset?.purchase_date ?? '',
+    cost: props.asset?.cost ?? '',
     status: props.asset?.status ?? 'available',
-    current_location: props.asset?.current_location ?? null,
-    notes: props.asset?.notes ?? null,
+    current_location: props.asset?.current_location ?? '',
+    assigned_ministry: props.asset?.assigned_ministry ?? '',
+    image: props.asset?.image ?? '',
+    qr_code: props.asset?.qr_code ?? '',
+    notes: props.asset?.notes ?? '',
 });
 
 const submit = (): void => {
     if (isEditing && props.asset?.id) {
         form.submit(AssetController.update(props.asset.id));
+
         return;
     }
 
@@ -150,7 +155,7 @@ const submit = (): void => {
                 <InputError :message="form.errors.cost" />
             </div>
 
-            <div class="grid gap-2 md:col-span-2">
+            <div class="grid gap-2">
                 <Label for="current_location">Current location</Label>
                 <Input
                     id="current_location"
@@ -158,6 +163,38 @@ const submit = (): void => {
                     placeholder="e.g. Main Sanctuary"
                 />
                 <InputError :message="form.errors.current_location" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="assigned_ministry">Assigned Ministry</Label>
+                <Input
+                    id="assigned_ministry"
+                    v-model="form.assigned_ministry"
+                    placeholder="e.g. Music & Worship"
+                />
+                <InputError :message="form.errors.assigned_ministry" />
+            </div>
+
+            <div class="grid gap-2 md:col-span-2">
+                <Label for="image">Image URL</Label>
+                <Input
+                    id="image"
+                    v-model="form.image"
+                    placeholder="e.g. https://example.com/image.jpg"
+                />
+                <InputError :message="form.errors.image" />
+            </div>
+
+            <div class="grid gap-2 md:col-span-2">
+                <Label for="description">Description</Label>
+                <textarea
+                    id="description"
+                    v-model="form.description"
+                    rows="3"
+                    class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                    placeholder="Detailed description of the asset..."
+                />
+                <InputError :message="form.errors.description" />
             </div>
 
             <div class="grid gap-2 md:col-span-2">

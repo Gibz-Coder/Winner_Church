@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Plus } from '@lucide/vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
+
+const page = usePage();
+const isAdmin = computed(() => {
+    const roles = page.props.auth?.user?.roles as string[] | undefined;
+
+    return roles?.includes('admin') ?? false;
+});
 import { Badge } from '@/components/ui/badge';
+import type { BadgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -20,7 +28,6 @@ import type {
     Paginated,
     SelectOption,
 } from '@/types';
-import type { BadgeVariants } from '@/components/ui/badge';
 
 const props = defineProps<{
     assets: Paginated<AssetListItem>;
@@ -39,13 +46,17 @@ const search = ref(props.filters.search ?? '');
 const status = ref(props.filters.status ?? 'all');
 const category = ref<number | 'all'>(props.filters.category ?? 'all');
 
-const statusVariant = (value: AssetStatus): BadgeVariants['variant'] =>
-    ({
-        available: 'default',
-        in_use: 'secondary',
-        under_repair: 'outline',
-        disposed: 'destructive',
-    })[value];
+const statusVariant = (value: string): BadgeVariants['variant'] =>
+    (
+        ({
+            available: 'default',
+            borrowed: 'secondary',
+            reserved: 'outline',
+            under_maintenance: 'destructive',
+            lost: 'destructive',
+            disposed: 'destructive',
+        }) as Record<string, BadgeVariants['variant']>
+    )[value] || 'default';
 
 let timeout: ReturnType<typeof setTimeout>;
 
@@ -76,7 +87,7 @@ watch([search, status, category], () => {
                     Track and manage all church assets.
                 </p>
             </div>
-            <Button as-child>
+            <Button v-if="isAdmin" as-child>
                 <Link :href="create()"><Plus class="size-4" /> Add asset</Link>
             </Button>
         </div>
@@ -124,6 +135,7 @@ watch([search, status, category], () => {
                     <tr>
                         <th class="px-4 py-3 font-medium">Name</th>
                         <th class="px-4 py-3 font-medium">Category</th>
+                        <th class="px-4 py-3 font-medium">Ministry</th>
                         <th class="px-4 py-3 font-medium">Location</th>
                         <th class="px-4 py-3 font-medium">Serial</th>
                         <th class="px-4 py-3 font-medium">Status</th>
@@ -145,6 +157,9 @@ watch([search, status, category], () => {
                         </td>
                         <td class="px-4 py-3">{{ asset.category }}</td>
                         <td class="px-4 py-3">
+                            {{ asset.assigned_ministry ?? '—' }}
+                        </td>
+                        <td class="px-4 py-3">
                             {{ asset.current_location ?? '—' }}
                         </td>
                         <td class="px-4 py-3 text-muted-foreground">
@@ -158,7 +173,7 @@ watch([search, status, category], () => {
                     </tr>
                     <tr v-if="assets.data.length === 0">
                         <td
-                            colspan="5"
+                            colspan="6"
                             class="px-4 py-10 text-center text-muted-foreground"
                         >
                             No assets found.

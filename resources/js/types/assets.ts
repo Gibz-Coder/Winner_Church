@@ -11,6 +11,7 @@ export type AssetListItem = {
     serial_number: string | null;
     brand: string | null;
     current_location: string | null;
+    assigned_ministry: string | null;
     status: AssetStatus;
     status_label: string;
     category: string;
@@ -22,9 +23,13 @@ export type AssetDetail = {
     serial_number: string | null;
     model_number: string | null;
     brand: string | null;
+    description: string | null;
     purchase_date: string | null;
     cost: string | null;
     current_location: string | null;
+    assigned_ministry: string | null;
+    image: string | null;
+    qr_code: string | null;
     notes: string | null;
     status: AssetStatus;
     status_label: string;
@@ -35,14 +40,18 @@ export type AssetFormData = {
     id?: number;
     category_id: number | null;
     name: string;
-    serial_number: string | null;
-    model_number: string | null;
-    brand: string | null;
-    purchase_date: string | null;
-    cost: string | null;
+    serial_number: string;
+    model_number: string;
+    brand: string;
+    description: string;
+    purchase_date: string;
+    cost: string;
     status: AssetStatus;
-    current_location: string | null;
-    notes: string | null;
+    current_location: string;
+    assigned_ministry: string;
+    image: string;
+    qr_code: string;
+    notes: string;
 };
 
 export type AssetLog = {

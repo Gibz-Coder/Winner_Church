@@ -6,11 +6,13 @@ use App\Enums\AssetLogAction;
 use App\Enums\AssetStatus;
 use App\Models\Asset;
 use App\Models\AssetLog;
+use App\Models\AuditLog;
+use App\Models\BorrowRequest;
 use App\Models\Category;
+use App\Models\MaintenanceLog;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 
 class AssetSeeder extends Seeder
 {
@@ -24,153 +26,288 @@ class AssetSeeder extends Seeder
         $admin = User::where('name', 'Admin')->first() ?? User::factory()->create(['name' => 'Admin']);
         $john = User::where('name', 'John Doe')->first() ?? User::factory()->create(['name' => 'John Doe']);
 
-        $media = Category::where('slug', 'media')->first();
-        $musical = Category::where('slug', 'musical-instruments')->first();
-        $electronics = Category::where('slug', 'electronics-gadgets')->first();
-        $general = Category::where('slug', 'general-property')->first();
+        $vehicles = Category::where('slug', 'vehicles')->first();
+        $mediaMusic = Category::where('slug', 'media-musical-instruments')->first();
+        $officeFurniture = Category::where('slug', 'office-furniture')->first();
 
-        // 1. Create the specific assets shown in the dashboard table:
-        $sonyCamera = Asset::factory()->create([
-            'category_id' => $media->id,
-            'name' => 'Sony A7iii Camera',
-            'serial_number' => '1234567890',
-            'model_number' => 'ILCE-7M3',
-            'brand' => 'Sony',
-            'status' => AssetStatus::InUse,
-            'current_location' => 'Main Sanctuary',
-            'updated_at' => Carbon::parse('2025-05-18 10:00:00'),
+        // Let's seed specific items matching user list
+        // Vehicles
+        $van = Asset::factory()->create([
+            'category_id' => $vehicles->id,
+            'name' => 'Church Van',
+            'serial_number' => 'VAN-2025-01',
+            'model_number' => 'HiAce Super Grandia',
+            'brand' => 'Toyota',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Church Parking A',
+            'assigned_ministry' => 'Transportation',
+            'description' => '15-seater church passenger van for outreach and transit.',
+            'qr_code' => 'http://localhost:8000/assets/1',
         ]);
 
-        $yamahaKey = Asset::factory()->create([
-            'category_id' => $musical->id,
-            'name' => 'Yamaha PSR-E473',
-            'serial_number' => 'YMH872364',
-            'model_number' => 'PSR-E473',
+        $car = Asset::factory()->create([
+            'category_id' => $vehicles->id,
+            'name' => "Pastor's Car",
+            'serial_number' => 'CAR-2024-02',
+            'model_number' => 'Camry Hybrid',
+            'brand' => 'Toyota',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Pastorate Garage',
+            'assigned_ministry' => 'Administration',
+            'description' => 'Official vehicle assigned for pastoral engagements.',
+            'qr_code' => 'http://localhost:8000/assets/2',
+        ]);
+
+        // Media & Musical Instruments
+        $drums = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'Yamaha Digital Drum Kit',
+            'serial_number' => 'YMH-DTX452K',
+            'model_number' => 'DTX452K',
             'brand' => 'Yamaha',
             'status' => AssetStatus::Available,
-            'current_location' => 'Music Room',
-            'updated_at' => Carbon::parse('2025-05-17 14:30:00'),
+            'current_location' => 'Main Sanctuary Stage',
+            'assigned_ministry' => 'Music & Worship',
+            'description' => 'Electronic drum set with standard pads and module.',
+            'qr_code' => 'http://localhost:8000/assets/3',
         ]);
 
-        $macbook = Asset::factory()->create([
-            'category_id' => $electronics->id,
-            'name' => 'MacBook Pro 14"',
-            'serial_number' => 'C02FG1ABCMD6',
-            'model_number' => 'A2442',
-            'brand' => 'Apple',
-            'status' => AssetStatus::InUse,
-            'current_location' => 'Media Room',
-            'updated_at' => Carbon::parse('2025-05-17 11:15:00'),
+        $bass = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'Fender Bass Guitar',
+            'serial_number' => 'FND-BASS-881',
+            'model_number' => 'Jazz Bass V',
+            'brand' => 'Fender',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Main Sanctuary Stage',
+            'assigned_ministry' => 'Music & Worship',
+            'description' => '5-string active electric bass guitar for services.',
+            'qr_code' => 'http://localhost:8000/assets/4',
         ]);
 
-        $shureMic = Asset::factory()->create([
-            'category_id' => $musical->id,
-            'name' => 'Shure SM58 Mic',
-            'serial_number' => 'SH58A91234',
-            'model_number' => 'SM58',
+        $mixer = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'Behringer X32',
+            'serial_number' => 'BHG-X32-9021',
+            'model_number' => 'X32 Digital Mixer',
+            'brand' => 'Behringer',
+            'status' => AssetStatus::Borrowed,
+            'current_location' => 'Youth Chapel',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => '40-input, 25-bus digital mixing console.',
+            'qr_code' => 'http://localhost:8000/assets/5',
+        ]);
+
+        $mics = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'Wireless Microphones',
+            'serial_number' => 'SHR-QLXD24',
+            'model_number' => 'QLXD4 Receiver + QLXD2',
             'brand' => 'Shure',
-            'status' => AssetStatus::UnderRepair,
-            'current_location' => 'Audio Room',
-            'updated_at' => Carbon::parse('2025-05-16 09:00:00'),
+            'status' => AssetStatus::Available,
+            'current_location' => 'Audio Control Booth',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => 'Set of 4 high-end wireless handheld microphones.',
+            'qr_code' => 'http://localhost:8000/assets/6',
         ]);
 
-        $chair = Asset::factory()->create([
-            'category_id' => $general->id,
-            'name' => 'Plastic Church Chair',
-            'serial_number' => 'CHAIR-0891',
-            'model_number' => 'CHAIR-0891',
-            'brand' => 'Generic',
+        $lights = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'Stage Lights',
+            'serial_number' => 'CHR-LED-PAR',
+            'model_number' => 'Colorado 1 Solo',
+            'brand' => 'Chauvet Professional',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Sanctuary Truss',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => 'DMX-controlled LED Par wash fixtures.',
+            'qr_code' => 'http://localhost:8000/assets/7',
+        ]);
+
+        $camera = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'Cameras',
+            'serial_number' => 'SNY-FX3-009',
+            'model_number' => 'ILME-FX3 Cinema',
+            'brand' => 'Sony',
+            'status' => AssetStatus::Borrowed,
+            'current_location' => 'Media Room',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => 'Full-frame cinema camera used for livestreaming and video production.',
+            'qr_code' => 'http://localhost:8000/assets/8',
+        ]);
+
+        $ledWall = Asset::factory()->create([
+            'category_id' => $mediaMusic->id,
+            'name' => 'LED Wall',
+            'serial_number' => 'LED-WALL-W10',
+            'model_number' => 'P2.5 LED Panel Grid',
+            'brand' => 'Absen',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Main Sanctuary Stage',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => 'Modular LED Screen grid backdrop behind sanctuary stage.',
+            'qr_code' => 'http://localhost:8000/assets/9',
+        ]);
+
+        // Office & Furniture
+        $chairs = Asset::factory()->create([
+            'category_id' => $officeFurniture->id,
+            'name' => 'Plastic Chairs',
+            'serial_number' => 'PLC-CHAIR-100',
+            'model_number' => 'Heavy Duty Plastic Stackable',
+            'brand' => 'Monobloc',
             'status' => AssetStatus::Available,
             'current_location' => 'Fellowship Hall',
-            'updated_at' => Carbon::parse('2025-05-15 16:45:00'),
+            'assigned_ministry' => 'General Property',
+            'description' => 'Pack of stackable chairs for church events.',
+            'qr_code' => 'http://localhost:8000/assets/10',
         ]);
 
-        $ledLight = Asset::factory()->create([
-            'category_id' => $media->id,
-            'name' => 'LED Studio Light',
-            'serial_number' => 'LED-5542-ABC',
-            'model_number' => 'LED-5542',
-            'brand' => 'Neewer',
+        $communion = Asset::factory()->create([
+            'category_id' => $officeFurniture->id,
+            'name' => 'Communion Tables',
+            'serial_number' => 'TBL-COMM-01',
+            'model_number' => 'Wooden Communion Table',
+            'brand' => 'Custom Woodworks',
             'status' => AssetStatus::Available,
-            'current_location' => 'Media Room',
-            'updated_at' => now()->subDays(2),
+            'current_location' => 'Altar Area',
+            'assigned_ministry' => 'Worship Support',
+            'description' => 'Polished mahogany wood altar table inscribed with "In Remembrance of Me".',
+            'qr_code' => 'http://localhost:8000/assets/11',
         ]);
 
-        // Create standard creation logs for these assets
-        foreach ([$sonyCamera, $yamahaKey, $macbook, $shureMic, $chair, $ledLight] as $asset) {
-            AssetLog::factory()->for($asset)->for($admin)->create([
+        $desk = Asset::factory()->create([
+            'category_id' => $officeFurniture->id,
+            'name' => 'Office Tables',
+            'serial_number' => 'TBL-OFFC-05',
+            'model_number' => 'L-Shaped Desk',
+            'brand' => 'OfficeDepot',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Pastor\'s Office',
+            'assigned_ministry' => 'Administration',
+            'description' => 'Wooden executive office desk with drawers.',
+            'qr_code' => 'http://localhost:8000/assets/12',
+        ]);
+
+        $projector = Asset::factory()->create([
+            'category_id' => $officeFurniture->id,
+            'name' => 'Projectors',
+            'serial_number' => 'EPS-PRJ-01',
+            'model_number' => 'EB-FH52 3LCD',
+            'brand' => 'Epson',
+            'status' => AssetStatus::UnderMaintenance,
+            'current_location' => 'Main Office',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => '4000 lumens wireless projector.',
+            'qr_code' => 'http://localhost:8000/assets/13',
+        ]);
+
+        $laptop = Asset::factory()->create([
+            'category_id' => $officeFurniture->id,
+            'name' => 'Laptops',
+            'serial_number' => 'APL-MBP-2025',
+            'model_number' => 'MacBook Pro 16" M3',
+            'brand' => 'Apple',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Main Office',
+            'assigned_ministry' => 'Media & Sound',
+            'description' => 'Office workstation laptop for church administration and live controls.',
+            'qr_code' => 'http://localhost:8000/assets/14',
+        ]);
+
+        $printer = Asset::factory()->create([
+            'category_id' => $officeFurniture->id,
+            'name' => 'Printers',
+            'serial_number' => 'HP-LJT-M404',
+            'model_number' => 'LaserJet Pro M404dn',
+            'brand' => 'HP',
+            'status' => AssetStatus::Available,
+            'current_location' => 'Secretary Room',
+            'assigned_ministry' => 'Administration',
+            'description' => 'Mono laser office printing machine.',
+            'qr_code' => 'http://localhost:8000/assets/15',
+        ]);
+
+        // Standard Asset creation logs
+        $seededAssets = [$van, $car, $drums, $bass, $mixer, $mics, $lights, $camera, $ledWall, $chairs, $communion, $desk, $projector, $laptop, $printer];
+        foreach ($seededAssets as $asset) {
+            AssetLog::create([
+                'asset_id' => $asset->id,
+                'user_id' => $admin->id,
                 'action' => AssetLogAction::Created,
                 'description' => "Asset \"{$asset->name}\" was added to the inventory.",
-                'created_at' => $asset->updated_at->copy()->subHours(2),
+                'created_at' => now()->subDays(15),
             ]);
         }
 
-        // Seed the 4 specific recent activities:
-        // 1. Checked In Shure SM58 Mic by Admin, 2h ago
-        AssetLog::factory()->for($shureMic)->for($admin)->create([
-            'action' => AssetLogAction::CheckedIn,
-            'description' => 'Checked in Shure SM58 Mic',
-            'created_at' => now()->subHours(2),
+        // Add some borrow requests and logs
+        $request1 = BorrowRequest::create([
+            'asset_id' => $camera->id,
+            'user_id' => $john->id,
+            'status' => 'approved',
+            'borrow_date' => now()->subDays(5),
+            'expected_return_date' => now()->addDays(2),
+            'borrow_condition' => 'Excellent - clean lens',
+            'authorized_by' => $admin->id,
         ]);
 
-        // 2. Checked Out Sony A7iii Camera by John Doe, 5h ago
-        AssetLog::factory()->for($sonyCamera)->for($john)->create([
+        $request2 = BorrowRequest::create([
+            'asset_id' => $mixer->id,
+            'user_id' => $john->id,
+            'status' => 'approved',
+            'borrow_date' => now()->subDays(3),
+            'expected_return_date' => now()->addDays(4),
+            'borrow_condition' => 'Fully functional',
+            'authorized_by' => $admin->id,
+        ]);
+
+        // Add a pending request
+        $requestPending = BorrowRequest::create([
+            'asset_id' => $drums->id,
+            'user_id' => $john->id,
+            'status' => 'pending',
+            'borrow_date' => now()->addDays(1),
+            'expected_return_date' => now()->addDays(5),
+            'borrow_condition' => 'Excellent condition',
+        ]);
+
+        // Add maintenance logs
+        MaintenanceLog::create([
+            'asset_id' => $projector->id,
+            'maintenance_type' => 'repair',
+            'description' => 'Replacing bulb and cleaning fan filters.',
+            'cost' => 150.00,
+            'start_date' => now()->subDays(2),
+            'status' => 'in_progress',
+            'performed_by' => 'Epson Service Center',
+        ]);
+
+        // Seed some history logs
+        AssetLog::create([
+            'asset_id' => $camera->id,
+            'user_id' => $john->id,
             'action' => AssetLogAction::CheckedOut,
-            'description' => 'Checked out Sony A7iii Camera',
-            'created_at' => now()->subHours(5),
+            'description' => 'Checked out Sony camera for outreach livestream.',
+            'created_at' => now()->subDays(5),
         ]);
 
-        // 3. Updated Asset Yamaha PSR-E473 by Admin, 1d ago
-        AssetLog::factory()->for($yamahaKey)->for($admin)->create([
-            'action' => AssetLogAction::Updated,
-            'description' => 'Updated asset details',
-            'created_at' => now()->subDay(),
+        AssetLog::create([
+            'asset_id' => $mixer->id,
+            'user_id' => $john->id,
+            'action' => AssetLogAction::CheckedOut,
+            'description' => 'Checked out Behringer X32 mixer for youth conference.',
+            'created_at' => now()->subDays(3),
         ]);
 
-        // 4. New Asset Added LED Studio Light by Admin, 2d ago
-        AssetLog::where('asset_id', $ledLight->id)->first()->update([
-            'created_at' => now()->subDays(2),
+        // Seed audit logs
+        AuditLog::create([
+            'user_id' => $admin->id,
+            'action' => 'Created Category',
+            'auditable_type' => Category::class,
+            'auditable_id' => $vehicles->id,
+            'new_values' => ['name' => 'Vehicles'],
+            'ip_address' => '127.0.0.1',
         ]);
-
-        // Seed remaining statuses to reach total counts
-        $statusPool = [];
-        for ($i = 0; $i < 69; $i++) {
-            $statusPool[] = AssetStatus::Available;
-        }
-        for ($i = 0; $i < 32; $i++) {
-            $statusPool[] = AssetStatus::InUse;
-        }
-        for ($i = 0; $i < 7; $i++) {
-            $statusPool[] = AssetStatus::UnderRepair;
-        }
-        for ($i = 0; $i < 14; $i++) {
-            $statusPool[] = AssetStatus::Disposed;
-        }
-
-        shuffle($statusPool);
-
-        $categoryTargets = [
-            $media->id => 26,
-            $musical->id => 34,
-            $electronics->id => 23,
-            $general->id => 39,
-        ];
-
-        $statusIndex = 0;
-        foreach ($categoryTargets as $catId => $count) {
-            for ($k = 0; $k < $count; $k++) {
-                $status = $statusPool[$statusIndex++];
-                $asset = Asset::factory()->create([
-                    'category_id' => $catId,
-                    'status' => $status,
-                ]);
-
-                AssetLog::factory()->for($asset)->for($admin)->create([
-                    'action' => AssetLogAction::Created,
-                    'description' => "Asset \"{$asset->name}\" was added to the inventory.",
-                    'created_at' => now()->subDays(rand(3, 30)),
-                ]);
-            }
-        }
     }
 }
